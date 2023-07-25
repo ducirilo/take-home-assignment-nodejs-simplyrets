@@ -11,6 +11,10 @@
     "strict": true,
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "src/typings"
+    ],
   }
 }
