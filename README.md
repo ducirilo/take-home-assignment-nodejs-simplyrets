@@ -1,4 +1,4 @@
-# ITypescript + NodeJS :rocket:
+# Typescript + NodeJS :rocket:
 
 ## Prerequisites
 
