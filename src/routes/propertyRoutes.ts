@@ -4,6 +4,7 @@ import { query, param, body } from 'express-validator';
 import { PropertyService } from '../services';
 import { DataInputValidatorMiddleware } from '../middlewares';
 import httpStatus from 'http-status';
+import ApplicationError from '../common/errors/ApplicationError';
 
 export const propertyRoutes = express.Router();
 
@@ -17,12 +18,21 @@ propertyRoutes.get('/',
         query('pageSize').optional().isInt({ min: 1, max: 100 }).withMessage('The filter pageSize must be a positive integer less than 100'),
         query('bedrooms').optional().isInt({ min: 0 }).withMessage('The bedrooms filter must be an integer greater than or equal zero'),
         query('bathrooms').optional().isInt({ min: 0 }).withMessage('The bathrooms filter must be an integer greater than or equal zero'),
-        query('type').optional().isAlpha().notEmpty().withMessage('The type filter must be an string value')
+        query('type').optional().isAlpha().notEmpty().withMessage('The type filter must be an string value'),
+        query('minPrice').optional().isFloat({ min: 1 }).withMessage('The filter min price must be a positive value'),
+        query('maxPrice').optional().isFloat({ min: 1 }).withMessage('The filter max price must be a positive value')
     ],
-    DataInputValidatorMiddleware,
+    DataInputValidatorMiddleware, 
     async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         Promise.resolve().then(async () => {
             const filters = req.query;
+
+            if (filters.minPrice && filters.maxPrice) {
+                if (parseFloat(filters.maxPrice as string) < parseFloat(filters.minPrice as string)) {
+                    throw new ApplicationError('Filter max price must be greater than or equal to min price.');
+                }
+            }
+
             const response = await propertyService.list(filters);
             return res.json(response);
         }).catch(next);

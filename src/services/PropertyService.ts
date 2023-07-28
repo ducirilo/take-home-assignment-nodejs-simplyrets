@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import AppDataSource from '../dataSource';
 import { Property } from '../entities';
 import { ResourceNotFoundError }  from '../common/errors';
@@ -20,7 +20,9 @@ export class PropertyService {
             pageSize = DEFAULT_PAGE_SIZE,
             bedrooms,
             bathrooms,
-            type
+            type,
+            minPrice = 1,
+            maxPrice = Number.MAX_VALUE
         } = filters;
 
         const take = pageSize;
@@ -30,7 +32,8 @@ export class PropertyService {
             where: {
                 bedrooms,
                 bathrooms,
-                type
+                type,
+                price: Between(minPrice, maxPrice)
             },
             take,
             skip

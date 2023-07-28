@@ -6,6 +6,8 @@ export interface ListPropertyFilter {
     bedrooms?: number;
     bathrooms?: number;
     type?: string;
+    minPrice?: number;
+    maxPrice?: number;
 }
 
 export interface ListPropertyResult {

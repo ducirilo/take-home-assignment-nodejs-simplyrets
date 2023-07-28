@@ -58,6 +58,36 @@ describe('propertyRoutes', () => {
             })).toBe(true);
         });
 
+        it('should return the properties filtered by price properly', async () => {
+
+            const response = await request(app)
+                .get('/properties')
+                .query({
+                    minPrice: 100000,
+                    maxPrice: 20000000
+                });
+
+            expect(response.status).toBe(httpStatus.OK);
+            expect(Array.isArray(response.body.data)).toBe(true);
+            expect(response.body.total).toBeGreaterThanOrEqual(1);
+            expect(response.body.data.every((property: Property) => {
+                return property.price >= 100000
+                  && property.price <= 20000000;
+            })).toBe(true);
+        });
+
+        it('should fail with a conflict error if max price filter is less than min price filter', async () => {
+
+            const response = await request(app)
+                .get('/properties')
+                .query({
+                    minPrice: 20000000,
+                    maxPrice: 100000
+                });
+
+            expect(response.status).toBe(httpStatus.CONFLICT);
+        });
+
         it('should fail with a bad request error if parameters are incorrect', async () => {
             const response = await request(app)
                 .get('/properties')
